@@ -3,6 +3,7 @@ import Particles from 'react-particles-js';
 import Clarifai from 'clarifai';
 import './App.css';
 import Navigation from './components/Navigation/Navigation';
+import Signin from './components/Signin/Signin';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import Logo from './components/Logo/Logo';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
@@ -30,7 +31,8 @@ class App extends Component {
     this.state = {
       input: '',
       imageUrl: '',
-      box: {}
+      box: {},
+      route: 'signin'
     }
   }
 
@@ -58,6 +60,10 @@ class App extends Component {
     this.setState({input: event.target.value});
   }
 
+  onRouteChange = (route) => {
+    this.setState({route: route});
+  }
+
   onButtonSubmit = () => {
     this.setState({imageUrl: this.state.input});
     app.models.predict(
@@ -72,13 +78,18 @@ class App extends Component {
         <Particles className='particles'
           params={particlesOptions}
         />
-        <Navigation />
-        <Logo />
-        <Rank />
-        <ImageLinkForm 
-          onInputChange={this.onInputChange} 
-          onButtonSubmit={this.onButtonSubmit} />
-       <FaceRecognition box={this.state.box} imageUrl={this.state.imageUrl} />
+        <Navigation onRouteChange={this.onRouteChange} />
+        { this.state.route === 'signin' ?
+            <Signin onRouteChange={this.onRouteChange} /> :
+            <div>
+              <Logo /> 
+              <Rank />
+              <ImageLinkForm 
+                onInputChange={this.onInputChange} 
+                onButtonSubmit={this.onButtonSubmit} />
+              <FaceRecognition box={this.state.box} imageUrl={this.state.imageUrl} />
+            </div>
+        }
       </div>
     );
   }
